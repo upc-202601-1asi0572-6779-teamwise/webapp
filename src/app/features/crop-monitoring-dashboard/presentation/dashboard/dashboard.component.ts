@@ -1,32 +1,60 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+﻿import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
-import { AuthService } from '../../shared/infrastructure/auth.service';
-import { PlantationService } from '../../field-technical-management/infrastructure/field-technical-management-api';
-import { AlertService } from '../../alert-and-notification/infrastructure/alert-and-notification-api';
-import { RecommendationService } from '../../agronomic-recommendation/infrastructure/agronomic-recommendation-api';
-import { SensorReadingService } from '../../shared/infrastructure/sensor-reading.service';
-import { DeviceService } from '../../iot-device-management/infrastructure/iot-device-management-api';
-import { InspectionService } from '../../field-technical-management/infrastructure/field-technical-management-api';
-import { Plantation } from '../../field-technical-management/domain/model/plantation.entity';
-import { Zone } from '../../field-technical-management/domain/model/zone.entity';
-import { Alert } from '../../alert-and-notification/domain/model/alert.entity';
-import { Recommendation } from '../../agronomic-recommendation/domain/model/recommendation.entity';
-import { SensorReading } from '../../shared/domain/sensor-reading.model';
-import { Device } from '../../iot-device-management/domain/model/device.entity';
-import { FieldInspection } from '../../field-technical-management/domain/model/inspection.entity';
-import { TranslationService } from '../../i18n/translation.service';
-import type { SparklineItem, TrendCard, ZoneHealthItem } from '../domain/model/dashboard-view.model';
+import { AuthService } from '../../../../shared/infrastructure/auth.service';
+import { PlantationService } from '../../../field-technical-management/infrastructure/plantation-api.service';
+import { AlertService } from '../../../alert-and-notification/infrastructure/alert-api.service';
+import { RecommendationService } from '../../../agronomic-recommendation/infrastructure/recommendation-api.service';
+import { SensorReadingService } from '../../../../shared/infrastructure/sensor-reading.service';
+import { DeviceService } from '../../../iot-device-management/infrastructure/device-api.service';
+import { InspectionService } from '../../../field-technical-management/infrastructure/inspection-api.service';
+import { Plantation } from '../../../field-technical-management/domain/plantation.model';
+import { Zone } from '../../../field-technical-management/domain/zone.model';
+import { Alert } from '../../../alert-and-notification/domain/alert.model';
+import { Recommendation } from '../../../agronomic-recommendation/domain/recommendation.model';
+import { SensorReading } from '../../../../shared/domain/sensor-reading.model';
+import { Device } from '../../../iot-device-management/domain/device.model';
+import { FieldInspection } from '../../../field-technical-management/domain/inspection.model';
 
-/**
- * Central state store for the Crop Monitoring Dashboard bounded context.
- *
- * Orchestrates data from multiple BCs (plantations, alerts, recommendations,
- * sensor readings, devices, inspections) into dashboard-ready signals and
- * computed values. Presentation views consume these signals without
- * duplicating fetch or derivation logic.
- */
-@Injectable({ providedIn: 'root' })
-export class CropMonitoringDashboardStore {
+interface SparklineItem {
+  label: string;
+  unit: string;
+  color: string;
+  currentValue: number;
+  vMin: number;
+  vMax: number;
+  points: string;
+}
+
+interface TrendCard {
+  label: string;
+  unit: string;
+  currentValue: number;
+  delta: number;
+  direction: 'up' | 'down' | 'stable';
+  color: string;
+  icon: string;
+  alertLevel: string | null;
+}
+
+interface ZoneHealthItem {
+  id: number;
+  name: string;
+  hectares: number;
+  status: 'optimal' | 'at_risk' | 'critical';
+  statusColor: string;
+  statusLabel: string;
+  criticalParam: string | null;
+  criticalParamColor: string;
+}
+
+@Component({
+  selector: 'app-dashboard',
+  imports: [DatePipe, DecimalPipe, RouterLink],
+  templateUrl: './dashboard.component.html',
+})
+export class DashboardComponent implements OnInit {
   private readonly plantationService = inject(PlantationService);
   private readonly alertService = inject(AlertService);
   private readonly recommendationService = inject(RecommendationService);
@@ -34,15 +62,15 @@ export class CropMonitoringDashboardStore {
   private readonly deviceService = inject(DeviceService);
   private readonly authService = inject(AuthService);
   private readonly inspectionService = inject(InspectionService);
-  private readonly t = inject(TranslationService);
+  private readonly router = inject(Router);
 
-  // ── Core state ────────────────────────────────────────────────
+  readonly isAgronomist = computed(() => this.authService.currentUser?.role === 'agronomist');
+
   readonly loading = signal(true);
   readonly error = signal('');
   readonly plantations = signal<Plantation[]>([]);
   readonly selectedPlantationId = signal(0);
 
-  // ── Per-BC data ───────────────────────────────────────────────
   readonly zones = signal<Zone[]>([]);
   readonly activeAlerts = signal<Alert[]>([]);
   readonly alertCount = signal({ critical: 0, warning: 0, total: 0 });
@@ -52,38 +80,28 @@ export class CropMonitoringDashboardStore {
   readonly inspections = signal<FieldInspection[]>([]);
   readonly trendReadings = signal<SensorReading[]>([]);
 
-  // ── Role ──────────────────────────────────────────────────────
-  readonly isAgronomist = computed(() => this.authService.currentUser?.role === 'agronomist');
+  readonly selectedPlantation = computed(() => {
+    const id = this.selectedPlantationId();
+    return this.plantations().find((p) => p.id === id) ?? null;
+  });
 
-  // ── Lookups ───────────────────────────────────────────────────
   readonly healthColors: Record<string, string> = {
     optimal: 'var(--color-success)',
     at_risk: 'var(--color-warning)',
     critical: 'var(--color-danger)',
   };
 
-  get healthLabels(): Record<string, string> {
-    return {
-      optimal: this.t.translate('dashboard.health.optimal'),
-      at_risk: this.t.translate('dashboard.health.atRisk'),
-      critical: this.t.translate('dashboard.health.critical'),
-    };
-  }
+  readonly healthLabels: Record<string, string> = {
+    optimal: 'Optimo',
+    at_risk: 'En riesgo',
+    critical: 'Critico',
+  };
 
-  get growerAlertLabels(): Record<string, string> {
-    return {
-      critical: this.t.translate('dashboard.alerts.urgent'),
-      warning: this.t.translate('dashboard.alerts.attention'),
-    };
-  }
+  readonly growerAlertLabels: Record<string, string> = {
+    critical: 'Urgente',
+    warning: 'Atencion',
+  };
 
-  // ── Computed: selected plantation ─────────────────────────────
-  readonly selectedPlantation = computed(() => {
-    const id = this.selectedPlantationId();
-    return this.plantations().find((p) => p.id === id) ?? null;
-  });
-
-  // ── Computed: device counts ───────────────────────────────────
   readonly connectedCount = computed(() =>
     this.devices().filter((d) => d.connectivityStatus === 'connected').length,
   );
@@ -94,7 +112,6 @@ export class CropMonitoringDashboardStore {
     this.devices().filter((d) => d.connectivityStatus === 'disconnected').length,
   );
 
-  // ── Computed: sparkline items (agronomist) ────────────────────
   readonly sparklineItems = computed((): SparklineItem[] => {
     const readings = this.trendReadings();
     if (!readings.length) return [];
@@ -107,9 +124,9 @@ export class CropMonitoringDashboardStore {
     }
 
     const configs: Record<string, { label: string; unit: string; color: string }> = {
-      temperature: { label: this.t.translate('dashboard.sparkline.temperature'), unit: '°C', color: 'var(--color-warning)' },
-      soil_humidity: { label: this.t.translate('dashboard.sparkline.soilHumidity'), unit: '%', color: 'var(--color-accent-cyan)' },
-      soil_ph: { label: this.t.translate('dashboard.sparkline.soilPh'), unit: '', color: 'var(--color-success)' },
+      temperature: { label: 'Temperatura', unit: '°C', color: 'var(--color-warning)' },
+      soil_humidity: { label: 'Humedad del suelo', unit: '%', color: 'var(--color-accent-cyan)' },
+      soil_ph: { label: 'pH del suelo', unit: '', color: 'var(--color-success)' },
     };
 
     const items: SparklineItem[] = [];
@@ -153,7 +170,6 @@ export class CropMonitoringDashboardStore {
     return items;
   });
 
-  // ── Computed: trend cards (grower) ────────────────────────────
   readonly trendCards = computed((): TrendCard[] => {
     const readings = this.trendReadings();
     if (!readings.length) return [];
@@ -168,19 +184,19 @@ export class CropMonitoringDashboardStore {
     const alerts = this.activeAlerts();
     const configs: Record<string, { label: string; unit: string; color: string; icon: string }> = {
       temperature: {
-        label: this.t.translate('dashboard.sparkline.temperature'),
+        label: 'Temperatura',
         unit: '°C',
         color: 'var(--color-warning)',
         icon: 'M12 2a7 7 0 00-7 7c0 2.4 1.2 4.6 3 5.9V22h2v-4h4v4h2v-7.1c1.8-1.3 3-3.5 3-5.9a7 7 0 00-7-7z',
       },
       soil_humidity: {
-        label: this.t.translate('dashboard.sparkline.soilHumidity'),
+        label: 'Humedad',
         unit: '%',
         color: 'var(--color-accent-cyan)',
         icon: 'M12 2.69l5.66 5.66a8 8 0 11-11.31 0z',
       },
       soil_ph: {
-        label: this.t.translate('dashboard.sparkline.soilPh'),
+        label: 'pH',
         unit: '',
         color: 'var(--color-success)',
         icon: 'M9 2a1 1 0 011 1v1h4V3a1 1 0 112 0v1h1a2 2 0 012 2v2h-2v6h2v2a2 2 0 01-2 2h-1v1a1 1 0 11-2 0v-1h-4v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2h2V8H3V6a2 2 0 012-2h1V3a1 1 0 011-1z',
@@ -226,17 +242,13 @@ export class CropMonitoringDashboardStore {
     return items;
   });
 
-  // ── Computed: top recommendation ──────────────────────────────
   readonly topRecommendation = computed(() => {
     const recs = this.recommendations();
     if (!recs.length) return null;
     const priorityOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
-    return [...recs].sort(
-      (a, b) => (priorityOrder[a.priority] ?? 99) - (priorityOrder[b.priority] ?? 99),
-    )[0];
+    return [...recs].sort((a, b) => (priorityOrder[a.priority] ?? 99) - (priorityOrder[b.priority] ?? 99))[0];
   });
 
-  // ── Computed: zone health items (grower enriched view) ────────
   readonly zoneHealthItems = computed((): ZoneHealthItem[] => {
     const zoneList = this.zones();
     const alerts = this.activeAlerts();
@@ -251,7 +263,7 @@ export class CropMonitoringDashboardStore {
 
       const worstAlert = zoneAlerts[0] ?? null;
       const criticalParam = worstAlert
-        ? `${worstAlert.label}: ${worstAlert.triggeredValue} · ${this.growerAlertLabels[worstAlert.alertLevel] ?? ''}`
+        ? `${worstAlert.label}: ${worstAlert.triggeredValue} — ${this.growerAlertLabels[worstAlert.alertLevel] ?? ''}`
         : null;
       const criticalParamColor = worstAlert?.alertLevel === 'critical'
         ? 'var(--color-danger)'
@@ -272,8 +284,24 @@ export class CropMonitoringDashboardStore {
     });
   });
 
-  // ── Orchestration: load everything ────────────────────────────
-  loadAll(): void {
+  ngOnInit(): void {
+    this.loadAll();
+  }
+
+  selectPlantation(id: number): void {
+    this.selectedPlantationId.set(id);
+    if (id > 0) {
+      this.loadZones(id);
+    } else {
+      this.zones.set([]);
+    }
+  }
+
+  navigateToReports(): void {
+    this.router.navigate(['/reportes']);
+  }
+
+  private loadAll(): void {
     this.loading.set(true);
     this.error.set('');
 
@@ -305,21 +333,10 @@ export class CropMonitoringDashboardStore {
 
           this.loadZones(plantations[0]?.id ?? 0);
         },
-        error: () => this.error.set($localize`:@@dashboard.error.load:No se pudieron cargar los datos del dashboard.`),
+        error: () => this.error.set('No se pudieron cargar los datos del dashboard.'),
       });
   }
 
-  // ── Plantation selection ──────────────────────────────────────
-  selectPlantation(id: number): void {
-    this.selectedPlantationId.set(id);
-    if (id > 0) {
-      this.loadZones(id);
-    } else {
-      this.zones.set([]);
-    }
-  }
-
-  // ── Internal: zone loading ────────────────────────────────────
   private loadZones(plantationId: number): void {
     if (!plantationId) return;
 
