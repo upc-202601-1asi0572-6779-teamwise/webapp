@@ -2,6 +2,7 @@
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { TranslationService } from '../../../../i18n/translation.service';
 import { FieldInspection } from '../../../domain/model/inspection.entity';
 import { InspectionService } from '../../../infrastructure/inspection-api.service';
 
@@ -13,6 +14,7 @@ import { InspectionService } from '../../../infrastructure/inspection-api.servic
 export class InspectionDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly inspectionService = inject(InspectionService);
+  private readonly t = inject(TranslationService);
 
   readonly inspection = signal<FieldInspection | null>(null);
   readonly loading = signal(false);
@@ -21,43 +23,55 @@ export class InspectionDetailComponent implements OnInit {
   // ── i18n getters ──
 
   get backLabel(): string {
-    return $localize`:@@insp.detail.back:Volver a inspecciones`;
+    return this.t.translate('insp.detail.back');
   }
 
   get badgeLabel(): string {
-    return $localize`:@@insp.detail.badge:Inspeccion de campo`;
+    return this.t.translate('insp.detail.badge');
   }
 
   get loadingText(): string {
-    return $localize`:@@insp.detail.loading:Cargando inspeccion...`;
+    return this.t.translate('insp.detail.loading');
   }
 
   get observationsLabel(): string {
-    return $localize`:@@insp.detail.observations:Observaciones`;
+    return this.t.translate('insp.detail.observations');
   }
 
   get findingsLabel(): string {
-    return $localize`:@@insp.detail.findings:Hallazgos`;
+    return this.t.translate('insp.detail.findings');
   }
 
   get summaryLabel(): string {
-    return $localize`:@@insp.detail.summary:Resumen`;
+    return this.t.translate('insp.detail.summary');
   }
 
   get interventionsLabel(): string {
-    return $localize`:@@insp.detail.interventions:Intervenciones`;
+    return this.t.translate('insp.detail.interventions');
   }
 
   get noInterventionsText(): string {
-    return $localize`:@@insp.detail.noInterventions:No se registraron intervenciones asociadas a esta inspeccion.`;
+    return this.t.translate('insp.detail.noInterventions');
   }
 
   get executedByLabel(): string {
-    return $localize`:@@insp.detail.executedBy:Ejecutado por`;
+    return this.t.translate('insp.detail.executedBy');
   }
 
   get onLabel(): string {
-    return $localize`:@@insp.detail.on:el`;
+    return this.t.translate('insp.detail.on');
+  }
+
+  get invalidInspectionText(): string {
+    return this.t.translate('insp.detail.error.invalid');
+  }
+
+  get loadErrorText(): string {
+    return this.t.translate('insp.detail.error.load');
+  }
+
+  get interventionResultLabel(): string {
+    return this.t.translate('insp.detail.result');
   }
 
   ngOnInit(): void {
@@ -65,7 +79,7 @@ export class InspectionDetailComponent implements OnInit {
     if (!Number.isNaN(id)) {
       this.load(id);
     } else {
-      this.error.set('Inspeccion no valida.');
+      this.error.set(this.invalidInspectionText);
     }
   }
 
@@ -78,7 +92,7 @@ export class InspectionDetailComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (inspection) => this.inspection.set(inspection),
-        error: () => this.error.set('No se pudo cargar la inspeccion.'),
+        error: () => this.error.set(this.loadErrorText),
       });
   }
 }

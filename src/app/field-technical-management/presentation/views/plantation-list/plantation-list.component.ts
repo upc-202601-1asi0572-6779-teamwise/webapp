@@ -68,9 +68,13 @@ export class PlantationListComponent implements OnInit {
   get emptyTitle(): string { return this.t.translate('plant.list.empty'); }
   get emptyDesc(): string { return this.t.translate('plant.list.emptyDesc'); }
   get createFirstLabel(): string { return this.t.translate('plant.list.createFirst'); }
+  get createNewLabel(): string { return this.t.translate('plant.list.createNew'); }
+  get backDashboardLabel(): string { return this.t.translate('plant.list.backDashboard'); }
+  get hectaresShortLabel(): string { return this.t.translate('plant.list.hectaresShort'); }
   get zonesLabel(): string { return this.t.translate('plant.list.zones'); }
   get devicesLabel(): string { return this.t.translate('plant.list.devices'); }
   get soilLabel(): string { return this.t.translate('plant.list.soil'); }
+  get loadErrorLabel(): string { return this.t.translate('plant.list.error.load'); }
 
   phaseLabel(phase: string): string {
     return phase === 'produccion'
@@ -82,6 +86,40 @@ export class PlantationListComponent implements OnInit {
     if (status === 'critical') return this.t.translate('plant.list.health.critical');
     if (status === 'at_risk') return this.t.translate('plant.list.health.atRisk');
     return this.t.translate('plant.list.health.optimal');
+  }
+
+  soilTypeLabel(value: string): string {
+    const normalizedKey = this.normalizeSoilTypeKey(value);
+    const translationKey = `plant.list.soilTypes.${normalizedKey}`;
+    const translated = this.t.translate(translationKey);
+    return translated === translationKey ? this.formatSoilType(value) : translated;
+  }
+
+  private normalizeSoilTypeKey(value: string): string {
+    return value
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '_');
+  }
+
+  private formatSoilType(value: string): string {
+    return value
+      .replace(/_/g, ' ')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
+  initials(name: string): string {
+    return name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part.charAt(0))
+      .join('')
+      .toUpperCase();
   }
 
   ngOnInit(): void {
@@ -97,7 +135,7 @@ export class PlantationListComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (raw) => this.plantations.set(raw.map((p) => this.toVm(p))),
-        error: () => this.error.set('No se pudieron cargar las plantaciones.'),
+        error: () => this.error.set(this.loadErrorLabel),
       });
   }
 

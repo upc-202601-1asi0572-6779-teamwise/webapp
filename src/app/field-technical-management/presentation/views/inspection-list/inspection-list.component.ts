@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../shared/infrastructure/auth.service';
+import { TranslationService } from '../../../../i18n/translation.service';
 import { FieldInspection } from '../../../domain/model/inspection.entity';
 import { InspectionService } from '../../../infrastructure/inspection-api.service';
 
@@ -14,6 +15,7 @@ import { InspectionService } from '../../../infrastructure/inspection-api.servic
 export class InspectionListComponent implements OnInit {
   private readonly inspectionService = inject(InspectionService);
   private readonly authService = inject(AuthService);
+  private readonly t = inject(TranslationService);
 
   readonly inspections = signal<FieldInspection[]>([]);
   readonly loading = signal(false);
@@ -25,33 +27,40 @@ export class InspectionListComponent implements OnInit {
 
   get badgeLabel(): string {
     return this.isAgronomist()
-      ? $localize`:@@insp.list.badge.agronomist:Segmento agronomo`
-      : $localize`:@@insp.list.badge.grower:Segmento productor`;
+      ? this.t.translate('insp.list.badge.agronomist')
+      : this.t.translate('insp.list.badge.grower');
   }
 
   get headingText(): string {
-    return $localize`:@@insp.list.heading:Inspecciones de campo`;
+    return this.t.translate('insp.list.heading');
   }
 
   get subtitleText(): string {
-    return $localize`:@@insp.list.subtitle:Historial de inspecciones tecnicas realizadas en las plantaciones a tu cargo.`;
+    return this.t.translate('insp.list.subtitle');
   }
 
   get counterLabel(): string {
-    return $localize`:@@insp.list.counter:inspecciones`;
+    return this.t.translate('insp.list.counter');
   }
 
   get loadingText(): string {
-    return $localize`:@@insp.list.loading:Cargando inspecciones...`;
+    return this.t.translate('insp.list.loading');
   }
 
   get emptyTitle(): string {
-    return $localize`:@@insp.list.empty:Sin inspecciones`;
+    return this.t.translate('insp.list.empty');
   }
 
   get emptyDesc(): string {
-    return $localize`:@@insp.list.emptyDesc:No hay inspecciones de campo registradas en el sistema.`;
+    return this.t.translate('insp.list.emptyDesc');
   }
+
+  get backDashboardLabel(): string { return this.t.translate('insp.list.backDashboard'); }
+  get findingsLabel(): string { return this.t.translate('insp.list.findingsLabel'); }
+  get observationsLabel(): string { return this.t.translate('insp.list.observationsLabel'); }
+  get inspectionDateLabel(): string { return this.t.translate('insp.list.inspectionDateLabel'); }
+  get agronomistFallbackLabel(): string { return this.t.translate('insp.list.agronomistFallback'); }
+  get loadErrorLabel(): string { return this.t.translate('insp.list.error.load'); }
 
   ngOnInit(): void {
     this.load();
@@ -66,7 +75,7 @@ export class InspectionListComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => this.inspections.set(response.inspections),
-        error: () => this.error.set('No se pudieron cargar las inspecciones.'),
+        error: () => this.error.set(this.loadErrorLabel),
       });
   }
 }
