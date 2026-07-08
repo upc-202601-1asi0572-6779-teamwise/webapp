@@ -2,6 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, finalize, tap } from 'rxjs';
 import { User } from '../../shared/domain/user.model';
 import { AuthService } from '../../shared/infrastructure/auth.service';
+import { TranslationService } from '../../i18n/translation.service';
 import { Subscription } from '../domain/model/subscription.entity';
 import { SubscriptionPlan } from '../domain/model/subscription-plan.entity';
 import { UserService } from '../infrastructure/user-api.service';
@@ -18,6 +19,7 @@ export class SubscriptionAndUserManagementStore {
   private readonly userService = inject(UserService);
   private readonly subscriptionService = inject(SubscriptionService);
   private readonly authService = inject(AuthService);
+  private readonly t = inject(TranslationService);
 
   // ── Profile state ────────────────────────────────────────────────
   readonly user = signal<User | null>(null);
@@ -58,7 +60,7 @@ export class SubscriptionAndUserManagementStore {
       .pipe(finalize(() => this.profileLoading.set(false)))
       .subscribe({
         next: (u) => this.user.set(u),
-        error: () => this.profileError.set('Error al cargar el perfil.'),
+        error: () => this.profileError.set(this.t.translate('subscription.profile.error.load')),
       });
   }
 
@@ -70,7 +72,7 @@ export class SubscriptionAndUserManagementStore {
       .pipe(
         tap({
           next: (u) => this.user.set(u),
-          error: () => this.profileError.set('Error al guardar los cambios.'),
+          error: () => this.profileError.set(this.t.translate('subscription.profile.error.save')),
         }),
         finalize(() => this.profileSaving.set(false)),
       );
@@ -85,7 +87,7 @@ export class SubscriptionAndUserManagementStore {
       .pipe(finalize(() => this.subscriptionLoading.set(false)))
       .subscribe({
         next: (sub) => this.subscription.set(sub),
-        error: () => this.subscriptionError.set('No tienes una suscripcion activa.'),
+        error: () => this.subscriptionError.set(this.t.translate('subscription.mySubscription.error.load')),
       });
   }
 
@@ -101,7 +103,7 @@ export class SubscriptionAndUserManagementStore {
           this.actionSuccess.set(res.message);
           this.loadSubscription();
         },
-        error: () => this.actionError.set('Error al renovar la suscripcion.'),
+        error: () => this.actionError.set(this.t.translate('subscription.mySubscription.error.renew')),
       });
   }
 
@@ -117,7 +119,7 @@ export class SubscriptionAndUserManagementStore {
           this.actionSuccess.set(res.message);
           this.loadSubscription();
         },
-        error: () => this.actionError.set('Error al cancelar la renovacion.'),
+        error: () => this.actionError.set(this.t.translate('subscription.mySubscription.error.cancel')),
       });
   }
 
@@ -130,7 +132,7 @@ export class SubscriptionAndUserManagementStore {
       .pipe(finalize(() => this.plansLoading.set(false)))
       .subscribe({
         next: (p) => this.plans.set(p),
-        error: () => this.plansError.set('Error al cargar los planes.'),
+        error: () => this.plansError.set(this.t.translate('subscription.plans.error.load')),
       });
   }
 
@@ -146,7 +148,7 @@ export class SubscriptionAndUserManagementStore {
     return this.subscriptionService
       .subscribe(planId, paymentMethod)
       .pipe(
-        tap({ error: () => this.plansError.set('No se pudo completar la suscripcion.') }),
+        tap({ error: () => this.plansError.set(this.t.translate('subscription.plans.error.subscribe')) }),
         finalize(() => this.subscribing.set('')),
       );
   }
@@ -157,7 +159,7 @@ export class SubscriptionAndUserManagementStore {
     return this.subscriptionService
       .upgrade(planId)
       .pipe(
-        tap({ error: () => this.plansError.set('No se pudo cambiar de plan.') }),
+        tap({ error: () => this.plansError.set(this.t.translate('subscription.plans.error.change')) }),
         finalize(() => this.upgrading.set('')),
       );
   }
