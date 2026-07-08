@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslationService } from '../../../../i18n/translation.service';
 import { AgronomicRecommendationStore } from '../../../application/agronomic-recommendation.store';
 
 @Component({
@@ -10,6 +11,7 @@ import { AgronomicRecommendationStore } from '../../../application/agronomic-rec
 })
 export class RecommendationListComponent implements OnInit {
   readonly store = inject(AgronomicRecommendationStore);
+  private readonly t = inject(TranslationService);
 
   readonly activeTab = signal<'pending' | 'published'>('published');
 
@@ -39,78 +41,88 @@ export class RecommendationListComponent implements OnInit {
 
   get badgeLabel(): string {
     return this.store.isAgronomist()
-      ? $localize`:@@rec.list.badge.agronomist:Segmento agronomo`
-      : $localize`:@@rec.list.badge.grower:Segmento productor`;
+      ? this.t.translate('rec.list.badge.agronomist')
+      : this.t.translate('rec.list.badge.grower');
   }
 
   get headingText(): string {
-    return $localize`:@@rec.list.heading:Recomendaciones`;
+    return this.t.translate('rec.list.heading');
   }
 
   get subtitleText(): string {
     return this.store.isAgronomist()
-      ? $localize`:@@rec.list.subtitle.agronomist:Gestiona las recomendaciones agronomicas: revisa, aprueba y publica para tus productores.`
-      : $localize`:@@rec.list.subtitle.grower:Consulta las recomendaciones agronomicas publicadas por tu agronomo.`;
+      ? this.t.translate('rec.list.subtitle.agronomist')
+      : this.t.translate('rec.list.subtitle.grower');
   }
 
   get counterLabel(): string {
-    return $localize`:@@rec.list.counter:recomendaciones`;
+    return this.t.translate('rec.list.counter');
   }
 
   get tabPendingLabel(): string {
-    return $localize`:@@rec.list.tab.pending:Pendientes`;
+    return this.t.translate('rec.list.tab.pending');
   }
 
   get tabPublishedLabel(): string {
-    return $localize`:@@rec.list.tab.published:Publicadas`;
+    return this.t.translate('rec.list.tab.published');
   }
 
   get newButtonLabel(): string {
-    return $localize`:@@rec.list.newButton:+ Nueva`;
+    return this.t.translate('rec.list.newButton');
   }
 
   get loadingText(): string {
-    return $localize`:@@rec.list.loading:Cargando recomendaciones...`;
+    return this.t.translate('rec.list.loading');
   }
 
   get emptyPendingTitle(): string {
-    return $localize`:@@rec.list.emptyPending:Sin pendientes`;
+    return this.t.translate('rec.list.emptyPending');
   }
 
   get emptyPendingDesc(): string {
-    return $localize`:@@rec.list.emptyPendingDesc:No hay recomendaciones que requieran revision.`;
+    return this.t.translate('rec.list.emptyPendingDesc');
   }
 
   get emptyPublishedTitle(): string {
-    return $localize`:@@rec.list.emptyPublished:Sin publicadas`;
+    return this.t.translate('rec.list.emptyPublished');
   }
 
   get emptyPublishedDesc(): string {
-    return $localize`:@@rec.list.emptyPublishedDesc:Aun no se han publicado recomendaciones.`;
+    return this.t.translate('rec.list.emptyPublishedDesc');
   }
 
   get createFirstLabel(): string {
-    return $localize`:@@rec.list.createFirst:Crear primera recomendacion`;
+    return this.t.translate('rec.list.createFirst');
   }
+
+  get backDashboardLabel(): string { return this.t.translate('rec.list.backDashboard'); }
+  get recommendedActionLabel(): string { return this.t.translate('rec.list.recommendedAction'); }
+  get createdAtLabel(): string { return this.t.translate('rec.list.createdAt'); }
+  get generatedByAiLabel(): string { return this.t.translate('rec.list.generatedBy.ai'); }
+  get generatedByManualLabel(): string { return this.t.translate('rec.list.generatedBy.manual'); }
 
   priorityLabel(key: string): string {
     const labels: Record<string, string> = {
-      critical: $localize`:@@rec.list.priority.critical:Critica`,
-      high: $localize`:@@rec.list.priority.high:Alta`,
-      medium: $localize`:@@rec.list.priority.medium:Media`,
-      low: $localize`:@@rec.list.priority.low:Baja`,
+      critical: this.t.translate('rec.list.priority.critical'),
+      high: this.t.translate('rec.list.priority.high'),
+      medium: this.t.translate('rec.list.priority.medium'),
+      low: this.t.translate('rec.list.priority.low'),
     };
     return labels[key] ?? key;
   }
 
   statusLabel(key: string): string {
     const labels: Record<string, string> = {
-      draft: $localize`:@@rec.list.status.draft:Borrador`,
-      pending_review: $localize`:@@rec.list.status.pendingReview:Pendiente`,
-      approved: $localize`:@@rec.list.status.approved:Aprobada`,
-      published: $localize`:@@rec.list.status.published:Publicada`,
+      draft: this.t.translate('rec.list.status.draft'),
+      pending_review: this.t.translate('rec.list.status.pendingReview'),
+      approved: this.t.translate('rec.list.status.approved'),
+      published: this.t.translate('rec.list.status.published'),
     };
     return labels[key] ?? key;
+  }
+
+  generatedByLabel(generatedBy: 'ai' | 'manual' | undefined | null): string {
+    return generatedBy === 'ai' ? this.generatedByAiLabel : this.generatedByManualLabel;
   }
 
   ngOnInit(): void {
