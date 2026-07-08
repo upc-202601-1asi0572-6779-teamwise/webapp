@@ -7,43 +7,41 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 
-const browserDistFolder = join(import.meta.dirname, '../browser');
+/**
+ * The base dist folder where the built SPA lives.
+ * Structure after `ng build`:
+ *   dist/web-app-smart-palm/
+ *     browser/
+ *       index.html
+ *       *.js / *.css
+ *     server/
+ *       server.mjs
+ */
+const baseDistFolder = join(import.meta.dirname, '..');
+const browserDistFolder = join(baseDistFolder, 'browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
 /**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
-
-/**
- * Serve static files from /browser
+ * Static file serving for the SPA (no locale prefixes).
+ * All assets are served from the single browser/ folder.
  */
 app.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
-    index: false,
+    index: 'index.html',
     redirect: false,
   }),
 );
 
 /**
- * Handle all other requests by rendering the Angular application.
+ * Handle all requests by rendering the Angular application (SPA mode).
  */
 app.use((req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
+    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
     .catch(next);
 });
 
