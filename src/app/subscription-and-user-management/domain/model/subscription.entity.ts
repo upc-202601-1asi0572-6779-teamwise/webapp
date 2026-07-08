@@ -1,9 +1,11 @@
+export type SubscriptionStatus = 'active' | 'inactive' | 'expired';
+
 export interface Subscription {
   id: string;
   userId: number;
   planId: string;
   planName: string;
-  status: 'active' | 'inactive' | 'expired';
+  status: SubscriptionStatus;
   maxHectares: number;
   maxDevices: number;
   usedHectares: number;
