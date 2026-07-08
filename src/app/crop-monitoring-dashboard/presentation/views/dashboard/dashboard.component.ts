@@ -95,6 +95,20 @@ export class DashboardComponent implements OnInit {
   get tableHeaderValue(): string { return this.t.translate('dashboard.table.value'); }
   get tableHeaderDevice(): string { return this.t.translate('dashboard.table.device'); }
   get tableHeaderTime(): string { return this.t.translate('dashboard.table.time'); }
+  get topRecommendationEyebrow(): string { return this.t.translate('dashboard.topRecommendation.eyebrow'); }
+  get viewDetailLabel(): string { return this.t.translate('dashboard.viewDetail'); }
+  get trendUpLabel(): string { return this.t.translate('dashboard.trend.up'); }
+  get trendDownLabel(): string { return this.t.translate('dashboard.trend.down'); }
+  get trendStableLabel(): string { return this.t.translate('dashboard.trend.stable'); }
+  get urgentLabel(): string { return this.t.translate('dashboard.alerts.urgent'); }
+  get attentionLabel(): string { return this.t.translate('dashboard.alerts.attention'); }
+  get hectaresShortLabel(): string { return this.t.translate('dashboard.units.hectaresShort'); }
+
+  phaseLabel(phase: string): string {
+    return phase === 'produccion'
+      ? this.t.translate('dashboard.phase.production')
+      : this.t.translate('dashboard.phase.establishment');
+  }
 
   ngOnInit(): void {
     this.store.loadAll();

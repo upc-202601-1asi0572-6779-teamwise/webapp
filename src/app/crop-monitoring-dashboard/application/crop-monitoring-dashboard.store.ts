@@ -14,6 +14,7 @@ import { Recommendation } from '../../agronomic-recommendation/domain/model/reco
 import { SensorReading } from '../../shared/domain/sensor-reading.model';
 import { Device } from '../../iot-device-management/domain/model/device.entity';
 import { FieldInspection } from '../../field-technical-management/domain/model/inspection.entity';
+import { TranslationService } from '../../i18n/translation.service';
 import type { SparklineItem, TrendCard, ZoneHealthItem } from '../domain/model/dashboard-view.model';
 
 /**
@@ -33,6 +34,7 @@ export class CropMonitoringDashboardStore {
   private readonly deviceService = inject(DeviceService);
   private readonly authService = inject(AuthService);
   private readonly inspectionService = inject(InspectionService);
+  private readonly t = inject(TranslationService);
 
   // ── Core state ────────────────────────────────────────────────
   readonly loading = signal(true);
@@ -62,16 +64,18 @@ export class CropMonitoringDashboardStore {
 
   get healthLabels(): Record<string, string> {
     return {
-      optimal: $localize`:@@dashboard.health.optimal:Optimo`,
-      at_risk: $localize`:@@dashboard.health.atRisk:En riesgo`,
-      critical: $localize`:@@dashboard.health.critical:Critico`,
+      optimal: this.t.translate('dashboard.health.optimal'),
+      at_risk: this.t.translate('dashboard.health.atRisk'),
+      critical: this.t.translate('dashboard.health.critical'),
     };
   }
 
-  readonly growerAlertLabels: Record<string, string> = {
-    critical: 'Urgente',
-    warning: 'Atencion',
-  };
+  get growerAlertLabels(): Record<string, string> {
+    return {
+      critical: this.t.translate('dashboard.alerts.urgent'),
+      warning: this.t.translate('dashboard.alerts.attention'),
+    };
+  }
 
   // ── Computed: selected plantation ─────────────────────────────
   readonly selectedPlantation = computed(() => {
@@ -103,9 +107,9 @@ export class CropMonitoringDashboardStore {
     }
 
     const configs: Record<string, { label: string; unit: string; color: string }> = {
-      temperature: { label: $localize`:@@dashboard.sparkline.temperature:Temperatura`, unit: '°C', color: 'var(--color-warning)' },
-      soil_humidity: { label: $localize`:@@dashboard.sparkline.soilHumidity:Humedad del suelo`, unit: '%', color: 'var(--color-accent-cyan)' },
-      soil_ph: { label: $localize`:@@dashboard.sparkline.soilPh:pH del suelo`, unit: '', color: 'var(--color-success)' },
+      temperature: { label: this.t.translate('dashboard.sparkline.temperature'), unit: '°C', color: 'var(--color-warning)' },
+      soil_humidity: { label: this.t.translate('dashboard.sparkline.soilHumidity'), unit: '%', color: 'var(--color-accent-cyan)' },
+      soil_ph: { label: this.t.translate('dashboard.sparkline.soilPh'), unit: '', color: 'var(--color-success)' },
     };
 
     const items: SparklineItem[] = [];
@@ -164,19 +168,19 @@ export class CropMonitoringDashboardStore {
     const alerts = this.activeAlerts();
     const configs: Record<string, { label: string; unit: string; color: string; icon: string }> = {
       temperature: {
-        label: $localize`:@@dashboard.sparkline.temperature:Temperatura`,
+        label: this.t.translate('dashboard.sparkline.temperature'),
         unit: '°C',
         color: 'var(--color-warning)',
         icon: 'M12 2a7 7 0 00-7 7c0 2.4 1.2 4.6 3 5.9V22h2v-4h4v4h2v-7.1c1.8-1.3 3-3.5 3-5.9a7 7 0 00-7-7z',
       },
       soil_humidity: {
-        label: $localize`:@@dashboard.trend.humidity:Humedad`,
+        label: this.t.translate('dashboard.sparkline.soilHumidity'),
         unit: '%',
         color: 'var(--color-accent-cyan)',
         icon: 'M12 2.69l5.66 5.66a8 8 0 11-11.31 0z',
       },
       soil_ph: {
-        label: $localize`:@@dashboard.trend.ph:pH`,
+        label: this.t.translate('dashboard.sparkline.soilPh'),
         unit: '',
         color: 'var(--color-success)',
         icon: 'M9 2a1 1 0 011 1v1h4V3a1 1 0 112 0v1h1a2 2 0 012 2v2h-2v6h2v2a2 2 0 01-2 2h-1v1a1 1 0 11-2 0v-1h-4v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2h2V8H3V6a2 2 0 012-2h1V3a1 1 0 011-1z',
