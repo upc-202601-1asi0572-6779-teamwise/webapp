@@ -1,0 +1,351 @@
+{
+  "navbar": {
+    "profile": "Profile",
+    "myPlan": "My plan",
+    "loginCTA": "Log in",
+    "role": {
+      "agronomist": "Agronomist",
+      "grower": "Grower"
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "plantationPortfolio": "Plantation portfolio",
+    "alerts": "Alerts",
+    "recommendations": "Recommendations",
+    "reports": "Reports",
+    "inspections": "Inspections",
+    "operationsCenter": "Operations center",
+    "mySubscription": "My subscription",
+    "myProfile": "My profile",
+    "logout": "Log out",
+    "role": {
+      "agronomist": "Agronomist",
+      "grower": "Grower"
+    }
+  },
+  "login": {
+    "heroBadge": "Monitoring and agronomic decision center",
+    "heroEyebrow": "SMART PALM / AGRONOMY DESK",
+    "heroTitle": "Monitor alerts, plots and technical decisions.",
+    "heroDescription": "Access a console designed for agronomic work: plantation tracking, inspections, recommendations and reports focused on fast and well-founded decisions.",
+    "featureAlerts": "Prioritized alerts",
+    "featureRecommendations": "Publishable recommendations",
+    "featureReports": "Technical reports",
+    "cardAlertsTitle": "Alerts",
+    "cardAlertsDesc": "Detect critical zones and prioritize interventions without losing context.",
+    "cardInspectionsTitle": "Inspections",
+    "cardInspectionsDesc": "Document field findings and turn observations into clear actions.",
+    "cardReportsTitle": "Reports",
+    "cardReportsDesc": "Present recommendations and technical status in a ready-to-follow flow.",
+    "formEyebrow": "SECURE ACCESS",
+    "heroHeadline": "Log in to your control center.",
+    "formSubtitle": "Continue with your field tracking, alerts and subscription status.",
+    "emailLabel": "EMAIL ADDRESS",
+    "emailPlaceholder": "you@email.com",
+    "passwordLabel": "PASSWORD",
+    "passwordPlaceholder": "Enter your password",
+    "submitButton": "Log in",
+    "loading": "Signing in...",
+    "emailRequired": "Enter your email address.",
+    "passwordRequired": "Enter your password.",
+    "emailInvalid": "Enter a valid email.",
+    "invalidCredentials": "Incorrect credentials. Please try again.",
+    "forgotPassword": "Forgot your password?",
+    "noAccountPrompt": "Don't have an account?",
+    "registerLink": "Sign up"
+  },
+  "plant": {
+    "list": {
+      "badge": {
+        "agronomist": "Agronomist segment",
+        "grower": "Grower segment"
+      },
+      "heading": {
+        "agronomist": "Plantation portfolio",
+        "grower": "My plantations"
+      },
+      "subtitle": {
+        "agronomist": "Technical supervision of all plantations under your responsibility.",
+        "grower": "Manage your crops, monitoring zones and associated devices."
+      },
+      "counter": "plantations",
+      "loading": "Loading plantations...",
+      "empty": "No plantations registered",
+      "emptyDesc": "Register your first plantation to start zone and device monitoring.",
+      "createFirst": "Create my first plantation",
+      "zones": "Zones",
+      "devices": "Devices",
+      "soil": "Soil",
+      "phase": {
+        "produccion": "Production",
+        "establecimiento": "Establishment"
+      },
+      "health": {
+        "critical": "Critical",
+        "atRisk": "At risk",
+        "optimal": "Optimal"
+      }
+    }
+  },
+  "alert": {
+    "section": {
+      "management": "Alert management"
+    },
+    "list": {
+      "heading": {
+        "subtitle": "Monitoring critical conditions, active alerts and zone event history."
+      },
+      "badge": {
+        "active": "active",
+        "critical": "critical",
+        "unacknowledged": "unacknowledged"
+      },
+      "tab": {
+        "active": "Active",
+        "resolved": "History"
+      },
+      "loading": "Loading alerts...",
+      "emptyActive": "No active alerts",
+      "emptyActiveDesc": "All monitored conditions are within normal ranges.",
+      "emptyResolved": "No history",
+      "emptyResolvedDesc": "No resolved alerts have been recorded yet.",
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "resolved": "Resolved"
+      },
+      "button": {
+        "acknowledge": "Acknowledge receipt",
+        "acknowledging": "Acknowledging..."
+      },
+      "value": {
+        "label": "value"
+      },
+      "range": {
+        "label": "Range:"
+      }
+    },
+    "severity": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "informative": "Informative"
+    },
+    "variable": {
+      "temperature": "Temperature",
+      "soilHumidity": "Soil humidity",
+      "soilPh": "Soil pH"
+    },
+    "detail": {
+      "back": "← Back to alerts",
+      "loading": "Loading detail...",
+      "measurement": "Measurement",
+      "expectedRange": "Expected range",
+      "current": "Current:",
+      "plantation": "Plantation",
+      "zone": "Zone",
+      "variable": "Variable",
+      "device": "Device",
+      "registered": "Registered",
+      "confirmedOn": "Confirmed on",
+      "status": {
+        "active": "Active"
+      }
+    },
+    "error": {
+      "noAlerts": "Alerts could not be loaded.",
+      "acknowledge": "Alert could not be acknowledged.",
+      "noAlertDetail": "Alert detail could not be loaded."
+    }
+  },
+  "dashboard": {
+    "heading": {
+      "agronomist": "Crop monitoring",
+      "grower": "My crop"
+    },
+    "subtitle": {
+      "agronomist": "Monitoring all plantations under your responsibility.",
+      "grower": "Summary of your plantations status"
+    },
+    "newReport": "+ New report",
+    "allPlantations": "All plantations",
+    "loading": "Loading dashboard...",
+    "alerts": {
+      "agronomist": "Active alerts",
+      "grower": "Alerts",
+      "criticalAgronomist": "Critical",
+      "criticalGrower": "Urgent",
+      "warningAgronomist": "Warnings",
+      "warningGrower": "Attention"
+    },
+    "devices": {
+      "agronomist": "Devices",
+      "grower": "Your devices",
+      "connected": "Connected",
+      "offline": "Offline mode",
+      "disconnected": "Disconnected"
+    },
+    "trends": {
+      "heading": "Parameter trends",
+      "subtitle": "Evolution of key variables over time"
+    },
+    "growerTrends": {
+      "heading": "How is your crop doing",
+      "subtitle": "Most recent sensor measurements"
+    },
+    "health": {
+      "agronomist": "Crop health",
+      "grower": "State of your zones"
+    },
+    "zones": {
+      "selectPlantation": "Select a plantation to view its zones."
+    },
+    "readings": {
+      "agronomist": "Latest readings",
+      "grower": "Recent readings"
+    },
+    "recentAlerts": "Recent alerts",
+    "viewAll": "View all",
+    "recommendations": "Recommendations",
+    "inspections": "Intervention history",
+    "plantations": {
+      "agronomist": "Plantations",
+      "grower": "Your plantations"
+    },
+    "table": {
+      "variable": "Variable",
+      "value": "Value",
+      "device": "Device",
+      "time": "Time"
+    }
+  },
+  "report": {
+    "list": {
+      "badge": {
+        "agronomist": "Agronomist segment",
+        "grower": "Grower segment"
+      },
+      "heading": "Reports",
+      "subtitle": {
+        "agronomist": "Generate, review and publish technical reports for your growers.",
+        "grower": "View technical reports published by your agronomist."
+      },
+      "counter": "reports",
+      "tab": {
+        "drafts": "Drafts",
+        "published": "Published"
+      },
+      "newReport": "New report",
+      "generateBtn": "Generate draft",
+      "generating": "Generating...",
+      "selectPlantation": "Select a plantation",
+      "loading": "Loading reports...",
+      "emptyDrafts": "No drafts",
+      "emptyDraftsDesc": "Use the form above to generate a new draft.",
+      "emptyPublished": "No published reports",
+      "emptyPublishedDesc": "No technical reports have been published yet.",
+      "goToDrafts": "Go to drafts",
+      "status": {
+        "published": "Published",
+        "draft": "Draft"
+      }
+    },
+    "error": {
+      "load": "Reports could not be loaded.",
+      "loadDetail": "Report could not be loaded."
+    }
+  },
+  "rec": {
+    "error": {
+      "load": "Recommendations could not be loaded.",
+      "loadDetail": "Recommendation could not be loaded."
+    }
+  },
+  "ftm": {
+    "error": {
+      "loadPlantations": "Plantations could not be loaded.",
+      "loadPlantation": "Plantation could not be loaded.",
+      "loadZones": "Zones could not be loaded.",
+      "loadInspections": "Inspections could not be loaded."
+    }
+  },
+  "notifications": {
+    "markError": "Could not mark as read.",
+    "markAllError": "Could not mark all as read.",
+    "loadError": "Notifications could not be loaded."
+  },
+  "plant": {
+    "detail": {
+      "back": {
+        "agronomist": "Back to portfolio",
+        "grower": "Back to plantations"
+      },
+      "loading": "Loading detail...",
+      "health": {
+        "critical": "Critical",
+        "atRisk": "At risk",
+        "optimal": "Optimal",
+        "zone": {
+          "critical": "Critical",
+          "atRisk": "Attention"
+        }
+      },
+      "phase": {
+        "produccion": "In production",
+        "establecimiento": "In establishment"
+      },
+      "zones": "Zones",
+      "devices": "Devices",
+      "alerts": "Alerts",
+      "soil": "Soil:",
+      "age": "Age:",
+      "updated": "Updated:",
+      "editBtn": "Edit plantation",
+      "addZoneBtn": "Add zone",
+      "monitoringZones": "Monitoring zones",
+      "zonesRegistered": "zones registered",
+      "loadingZones": "Loading zones...",
+      "noZones": "No zones registered",
+      "noZonesDescAgronomist": "This plantation does not have any monitoring zones defined yet.",
+      "noZonesDescGrower": "Create the first zone to prepare device assignment.",
+      "createFirstZone": "Create first zone",
+      "soilTypes": {
+        "arcillosoHumedo": "Clayey moist",
+        "francoArenoso": "Sandy loam",
+        "francoArcilloso": "Clay loam",
+        "arenoso": "Sandy"
+      },
+      "noDescription": "No description.",
+      "error": {
+        "invalid": "Invalid plantation.",
+        "load": "Could not load the plantation."
+      }
+    }
+  },
+  "insp": {
+    "list": {
+      "badge": {
+        "agronomist": "Agronomist segment",
+        "grower": "Grower segment"
+      },
+      "heading": "Field inspections",
+      "subtitle": "History of technical inspections performed on plantations under your responsibility.",
+      "counter": "inspections",
+      "loading": "Loading inspections...",
+      "empty": "No inspections",
+      "emptyDesc": "No field inspections have been registered in the system."
+    },
+    "detail": {
+      "back": "Back to inspections",
+      "badge": "Field inspection",
+      "loading": "Loading inspection...",
+      "observations": "Observations",
+      "findings": "Findings",
+      "summary": "Summary",
+      "interventions": "Interventions",
+      "noInterventions": "No interventions associated with this inspection were recorded.",
+      "executedBy": "Executed by",
+      "on": "on"
+    }
+  }
+}
