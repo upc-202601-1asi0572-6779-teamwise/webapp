@@ -47,6 +47,10 @@ export class ReportListComponent implements OnInit {
   get emptyPublishedTitle(): string { return this.t.translate('report.list.emptyPublished'); }
   get emptyPublishedDesc(): string { return this.t.translate('report.list.emptyPublishedDesc'); }
   get goToDraftsLabel(): string { return this.t.translate('report.list.goToDrafts'); }
+  get backDashboardLabel(): string { return this.t.translate('report.list.backDashboard'); }
+  get draftHelpText(): string { return this.t.translate('report.list.draftHelp'); }
+  get agronomistNameFallback(): string { return this.t.translate('report.list.agronomistFallback'); }
+  get reportDateLabel(): string { return this.t.translate('report.list.reportDate'); }
 
   statusLabel(status: string): string {
     return status === 'published'
