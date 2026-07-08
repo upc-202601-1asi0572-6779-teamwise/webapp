@@ -82,11 +82,11 @@
 
   /* Gradients */
   --gradient-hero: linear-gradient(
-    150deg,
-    #0d3320 0%,
-    #1a5c38 40%,
-    #1e7a47 75%,
-    #1a6b50 100%
+          150deg,
+          #0d3320 0%,
+          #1a5c38 40%,
+          #1e7a47 75%,
+          #1a6b50 100%
   );
 
   /* Spacing */
