@@ -54,6 +54,41 @@ ng e2e
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
+## Deploy to Cloudflare Pages
+
+This is a client-side rendered (CSR) Angular SPA. Cloudflare Pages serves
+the built assets directly with no Worker / SSR runtime.
+
+### One-time setup
+
+1. Connect the GitHub repository to Cloudflare Pages
+   (https://dash.cloudflare.com → Workers & Pages → Create → Pages → Connect to Git).
+2. In the project setup screen, configure the build:
+
+   | Field              | Value                                |
+   | ------------------ | ------------------------------------ |
+   | Framework preset   | **None** (or "Angular" if available) |
+   | Build command      | `npm run build`                      |
+   | Build output      | `dist/web-app-smart-palm/browser`    |
+   | Root directory    | `/`                                  |
+   | Node version      | `22` (matches `.nvmrc`)              |
+
+3. No environment variables are required for the build.
+
+### How routing works
+
+- Every route is rendered on the client (`RenderMode.Client`).
+- The `public/_redirects` rule `/*  /index.html  200` makes the SPA fallback work
+  for deep links (`/dashboard`, `/plantaciones/:id`, etc.).
+- `public/_headers` sets security headers and immutable cache for hashed assets.
+
+### Local preview of the production build
+
+```bash
+npm run build
+npx wrangler pages dev dist/web-app-smart-palm/browser
+```
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
