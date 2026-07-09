@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://smart-palm-platform.onrender.com/api/v1',
+  apiUrl: 'https://smartpalm-mock-api.onrender.com/api/v1',
   dataSource: 'real' as 'real' | 'mock',
   demoAuth: true,
   demo: {
